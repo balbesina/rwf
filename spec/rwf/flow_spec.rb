@@ -10,6 +10,40 @@ module FlowSpec
       it 'is empty' do
         expect(RWF::Flow.tasks).to be_empty
       end
+
+      class NestedFlow < RWF::Flow
+        task :method_task
+        task ->(*) { true }
+
+        def method_task(*)
+          true
+        end
+      end
+
+      class SomeCallable
+        def self.call(*)
+          true
+        end
+      end
+
+      class TasksFlow < RWF::Flow
+        task NestedFlow
+        task SomeCallable
+      end
+
+      it 'supports methods, procs, nested flows and callables' do
+        expect(TasksFlow.().success?).to be true
+      end
+
+      context 'when task is unknown' do
+        class StrangeFlow < RWF::Flow
+          task Object.new
+        end
+
+        it 'raises error' do
+          expect { StrangeFlow.() }.to raise_error RWF::Error, 'Not supported task'
+        end
+      end
     end
 
     context 'when descendant initialized' do

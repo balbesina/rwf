@@ -23,8 +23,8 @@ module RWF
         task(*args, type: :error)
       end
 
-      def call(params = {})
-        new.(params)
+      def call(io_params = {}, params = nil)
+        new.(io_params, params)
       end
     end
 
@@ -48,8 +48,8 @@ module RWF
     def prepare_callable(task)
       if task.is_a?(Symbol)
         Task.new(method(task))
-      elsif task < Flow
-        task.new
+      elsif task.respond_to?(:<) && task < Flow
+        task
       elsif task.respond_to?(:call)
         Task.new(task)
       else

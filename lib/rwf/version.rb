@@ -1,6 +1,6 @@
 module RWF
   module Version
-    STRING = '0.0.1'.freeze
+    STRING = '0.0.2'.freeze
 
     def self.version
       STRING
