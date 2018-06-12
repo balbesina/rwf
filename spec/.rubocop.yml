@@ -1,0 +1,19 @@
+inherit_from: ../.rubocop.yml
+
+require:
+  - rubocop-rspec
+
+Metrics/BlockLength:
+  Enabled: false
+
+Metrics/ModuleLength:
+  Enabled: false
+
+Style/ClassAndModuleChildren:
+  Enabled: false
+
+Naming/UncommunicativeMethodParamName:
+  Enabled: false
+
+RSpec/NestedGroups:
+  Max: 4

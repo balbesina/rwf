@@ -9,12 +9,12 @@ Gem::Specification.new do |s|
   s.required_ruby_version = '>= 2.1.0'
   s.authors = ['balbesina']
   s.description = <<-DESCRIPTION
-    description
+    Simple Ruby Workflow
   DESCRIPTION
 
   s.email = 'megabalbes@gmail.com'
   s.licenses = ['MIT']
   s.homepage = 'https://github.com/balbesina/rwf'
-  s.files = `git ls-files`.split($RS)
-  s.summary = 'summary'
+  s.files = `git ls-files lib LICENSE.txt`.split($RS)
+  s.summary = 'Simple Ruby Workflow'
 end
