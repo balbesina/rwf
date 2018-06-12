@@ -8,9 +8,9 @@ module RWF
       end
 
       def task(*args)
-        task, options, merge_options = *args
-        options ||= {}
-        task_options = merge_options ? options.merge(merge_options) : options
+        task, *options = *args
+        task_options = {}
+        options.each { |option| task_options.merge!(option) }
 
         tasks << [task, task_options]
       end
