@@ -63,7 +63,7 @@ end
 MyFlow.()
 ```
 
-The result would be:
+The output would be:
 
 ```sh
 ruby my_flow.rb

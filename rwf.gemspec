@@ -15,6 +15,6 @@ Gem::Specification.new do |s|
   s.email = 'megabalbes@gmail.com'
   s.licenses = ['MIT']
   s.homepage = 'https://github.com/balbesina/rwf'
-  s.files = `git ls-files lib LICENSE.txt`.split($RS)
+  s.files = `git ls-files lib LICENSE.txt README.md`.split($RS)
   s.summary = 'Simple Ruby Workflow'
 end
