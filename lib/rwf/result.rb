@@ -23,6 +23,10 @@ module RWF
       state == :success && error.nil?
     end
 
+    def okish?
+      initial? || success?
+    end
+
     def failure!(error = nil)
       @error = error if error
       @state = :failure
@@ -44,6 +48,10 @@ module RWF
 
     def [](key)
       @params[key]
+    end
+
+    def to_s
+      state.to_s.capitalize
     end
   end
 end

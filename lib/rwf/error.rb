@@ -2,4 +2,5 @@
 
 module RWF
   Error = Class.new(StandardError)
+  ConfigError = Class.new(Error)
 end

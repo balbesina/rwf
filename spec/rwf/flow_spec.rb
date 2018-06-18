@@ -41,7 +41,7 @@ module FlowSpec
         end
 
         it 'raises error' do
-          expect { StrangeFlow.() }.to raise_error RWF::Error, 'Not supported task'
+          expect { StrangeFlow.() }.to raise_error RWF::Error, 'Not supported task.'
         end
       end
     end
@@ -142,7 +142,7 @@ module FlowSpec
           task :other_unreachable_task
 
           def task_that_fails(*)
-            false
+            raise StandardError
           end
 
           def unreachable_task(params, *)
@@ -238,6 +238,65 @@ module FlowSpec
 
           it 'is not running task after failed cure task' do
             expect(result[:other_output]).to be_nil
+          end
+        end
+      end
+    end
+
+    context 'when task changes flow order' do
+      class ChangeFlow < RWF::Flow
+        task :task1, on_success: :end, on_error: :task3
+        task :unreachable_task
+        task :task3, on_success: :some_ptr
+        task :task4, ptr: :some_ptr, on_success: :missing_ptr
+
+        def task1(_params, task1_returns:, **)
+          task1_returns
+        end
+
+        def unreachable_task(params, *)
+          params[:output] = 'you should not see me'
+          false
+        end
+
+        def task3(params, *)
+          params[:task3_result] = 'task3 was called'
+        end
+
+        def task4(params, task4_returns: false, **)
+          params[:task4_result] = 'task4 was called'
+          task4_returns
+        end
+      end
+
+      let(:task1_returns) { true }
+      let(:task4_returns) { false }
+      let(:result) { ChangeFlow.(task1_returns: task1_returns, task4_returns: task4_returns) }
+
+      it 'is success' do
+        expect(result.success?).to be true
+      end
+
+      it 'skips unreachable task' do
+        expect(result[:output]).to be_nil
+      end
+
+      context 'when task error' do
+        let(:task1_returns) { false }
+
+        it 'follows the pointer to task3' do
+          expect(result[:task3_result]).to eq 'task3 was called'
+        end
+
+        it 'supports named pointers to any task' do
+          expect(result[:task4_result]).to eq 'task4 was called'
+        end
+
+        context 'when pointer to missing task' do
+          let(:task4_returns) { true }
+
+          it 'raises when task pointer was not found' do
+            expect { result.success? }.to raise_error RWF::ConfigError, 'Task with pointer \'missing_ptr\' not found.'
           end
         end
       end
