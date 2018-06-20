@@ -8,6 +8,10 @@ Simple Ruby Workflow
 gem install rwf
 ```
 
+## Direct flow diagram
+
+![direct flow](img/diagram/direct_flow.png)
+
 ## Usage
 
 ```rb
