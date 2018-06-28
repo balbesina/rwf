@@ -8,13 +8,16 @@ Simple Ruby Workflow
 gem install rwf
 ```
 
-## Direct flow diagram
+## Direct Flow
+
+### Direct flow diagram
 
 ![direct flow](img/diagram/direct_flow.png)
 
-## Usage
+### Usage
 
-```rb
+```ruby
+# TODO: rewrite to match diagram
 # my_flow.rb
 require 'rwf'
 
@@ -70,7 +73,6 @@ MyFlow.()
 The output would be:
 
 ```sh
-ruby my_flow.rb
 task1
 lambda
 am nested and i know it
@@ -78,4 +80,82 @@ error_task
 cure_task
 some output: 'hi from error_task'
 after_cure
+```
+
+## Flow GoTos
+
+```ruby
+# goto_flow.rb
+class GotoFlow < RWF::Flow
+  task :task1, on_success: :task3
+  task :task2, on_error: :end
+  task :some, ptr: :task3, on_success: :task2
+  task :task4, on_success: :task5
+  error :task5
+
+  def task1(_params, result1: false, **)
+    puts '-> task1'
+    result1
+  end
+
+  def task2(_params, result2: nil, **)
+    puts '-> task2'
+    result2
+  end
+
+  def some(_params, result3: nil, **)
+    puts '-> some'
+    result3
+  end
+
+  def task4(_params, result4: nil, **)
+    puts '-> task4'
+    result4
+  end
+
+  def task5(*)
+    puts '-> task5'
+  end
+end
+```
+
+```ruby
+GotoFlow.()
+```
+
+```sh
+-> task1
+-> task5
+```
+
+```ruby
+GotoFlow.(result1: true)
+```
+
+```sh
+-> task1
+-> some
+-> task5
+```
+
+```ruby
+GotoFlow.(result1: true, result3: true)
+```
+
+```sh
+-> task1
+-> some
+-> task2
+```
+
+```ruby
+GotoFlow.(result1: true, result3: true, result2: true)
+```
+
+```sh
+-> task1
+-> some
+-> task2
+-> some
+-> task5
 ```
