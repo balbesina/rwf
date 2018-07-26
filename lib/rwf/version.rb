@@ -1,6 +1,8 @@
+# frozen_string_literal: true
+
 module RWF
   module Version
-    STRING = '0.0.3'.freeze
+    STRING = '0.0.4'
 
     def self.version
       STRING

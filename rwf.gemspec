@@ -6,7 +6,7 @@ Gem::Specification.new do |s|
   s.name = 'rwf'
   s.version = RWF::Version::STRING
   s.platform = Gem::Platform::RUBY
-  s.required_ruby_version = '>= 2.1.0'
+  s.required_ruby_version = '>= 2.5'
   s.authors = ['balbesina']
   s.description = <<-DESCRIPTION
     Simple Ruby Workflow

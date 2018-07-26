@@ -17,69 +17,88 @@ gem install rwf
 ### Usage
 
 ```ruby
-# TODO: rewrite to match diagram
-# my_flow.rb
-require 'rwf'
-
-class NestedFlow < RWF::Flow
-  task :fail_task
-
-  def fail_task(*)
-    puts 'am nested and i know it'
-    false # return falsey - task result is failure
-  end
-end
-
-class MyFlow < RWF::Flow
+# docs/diagram/direct_flow.rb
+class DirectFlow < RWF::Flow
   task :task1
-  task ->(*) { puts('lambda'); true }
-  task NestedFlow
-  error :error_task
-  task :skipped_task
-  cure :cure_task
-  task :after_cure
+  task :task2
+  error :error3
+  task :task4
+  error :error5
+  task :task6
+  cure :cure7
+  task :task8
 
-  def task1(*)
+  def task1(_params, title:, task_result1: true, **)
+    puts "\n-> #{title}"
     puts 'task1'
-    true # return truthy - task result would be `success`
+    task_result1
   end
 
-  def error_task(params, *)
-    puts 'error_task'
-    params[:some_output] = 'hi from error_task'
+  def task2(_params, task_result2: true, **)
+    puts 'task2'
+    task_result2
   end
 
-  def skipped_task(*)
-    raise 'that task should not be called - flow state is now a `failure`'
+  def error3(_params, task_result3: true, **)
+    puts 'error3'
+    task_result3
   end
 
-  # note that we can read some output of previous steps
-  def cure_task(_params, some_output:, **)
-    puts 'cure_task'
-    puts "some output: '#{some_output}'"
-    true # success of `cure` task restores the flow's state
+  def task4(_params, task_result4: true, **)
+    puts 'task4'
+    task_result4
   end
 
-  # that task was called because the flow was cured
-  def after_cure(*)
-    puts 'after_cure'
-    true
+  def error5(_params, task_result5: true, **)
+    puts 'error5'
+    task_result5
+  end
+
+  def task6(_params, task_result6: true, **)
+    puts 'task6'
+    task_result6
+  end
+
+  def cure7(_params, task_result7: false, **)
+    puts 'cure7'
+    task_result7
+  end
+
+  def task8(_params, task_result8: true, **)
+    puts 'task8'
+    task_result8
   end
 end
 
-MyFlow.()
+DirectFlow.(title: 'Success Flow')
+DirectFlow.(title: 'Failure Flow', task_result4: false)
+DirectFlow.(title: 'Cure Flow', task_result4: false, task_result7: true)
 ```
 
 The output would be:
 
 ```sh
+-> Success Flow
 task1
-lambda
-am nested and i know it
-error_task
-cure_task
-some output: 'hi from error_task'
-after_cure
+task2
+task4
+task6
+task8
+
+-> Failure Flow
+task1
+task2
+task4
+error5
+cure7
+
+-> Cure Flow
+task1
+task2
+task4
+error5
+cure7
+task8
 ```
 
 ## Flow GoTos
