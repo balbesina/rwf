@@ -37,6 +37,14 @@ module RWF
       !success?
     end
 
+    def on_success
+      yield if success?
+    end
+
+    def on_failure
+      yield(error) if failure?
+    end
+
     def state!(value)
       value ? success! : failure!
     end
