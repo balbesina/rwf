@@ -301,5 +301,34 @@ module FlowSpec
         end
       end
     end
+
+    context 'when task returns redirect' do
+      class RedirectPtrFlow < RWF::Flow
+        task :first
+        task :second
+        task :third
+        task :forth
+
+        def first(*)
+          RWF::PtrSuccess.new(:third)
+        end
+
+        def second(*)
+          false
+        end
+
+        def third(*)
+          RWF::EndSuccess.new
+        end
+
+        def forth(*)
+          false
+        end
+      end
+
+      let(:result) { RedirectPtrFlow.() }
+
+      it { expect(result.success?).to be true }
+    end
   end
 end

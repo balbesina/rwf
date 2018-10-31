@@ -64,7 +64,7 @@ module RWF
       callable = prepare_callable(task)
       task_result = callable.(io_params, params.nil? ? io_params : params)
       next_type = decide_type(result, task_result, options)
-      next_ptr = decide_ptr(task_result, options)
+      next_ptr = task_result.redirect? ? task_result.ptr : decide_ptr(task_result, options)
 
       [next_type, next_ptr]
     end

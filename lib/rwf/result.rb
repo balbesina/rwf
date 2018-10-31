@@ -2,12 +2,13 @@
 
 module RWF
   class Result
-    attr_reader :state, :error
+    attr_reader :state, :error, :ptr
 
     def initialize(params)
       @params = params
       @state = :initial
       @error = nil
+      @ptr = nil
     end
 
     def initial?
@@ -37,6 +38,15 @@ module RWF
       !success?
     end
 
+    def redirect?
+      !ptr.nil?
+    end
+
+    def redirect!(ptr)
+      @ptr = ptr
+      self
+    end
+
     def on_success
       yield if success?
     end
@@ -46,7 +56,12 @@ module RWF
     end
 
     def state!(value)
-      value ? success! : failure!
+      if value.is_a?(Result)
+        value.success? ? success! : failure!
+        redirect!(value.ptr) if value.redirect?
+      else
+        value ? success! : failure!
+      end
     end
 
     def recover!
@@ -60,6 +75,19 @@ module RWF
 
     def to_s
       state.to_s.capitalize
+    end
+  end
+
+  class PtrSuccess < Result
+    def initialize(ptr)
+      @ptr = ptr
+      success!
+    end
+  end
+
+  class EndSuccess < PtrSuccess
+    def initialize
+      super(:end)
     end
   end
 end
